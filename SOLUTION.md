@@ -1,7 +1,7 @@
 # Lab Solution: IAM Policies and Roles
 
-**Student Name:** ___________________________  
-**Date:** ___________________________  
+**Student Name:** Julio Cesar Aldana Almanza 
+**Date:** 08/07/2026  
 **Lab Completion Time:** ___________ minutes
 
 ---
@@ -14,38 +14,32 @@
 
 **Version:**
 ```
-_____________________________________________________________
-_____________________________________________________________
+It is the version of the language used to write the policy
 ```
 
 **Statement:**
 ```
-_____________________________________________________________
-_____________________________________________________________
+It describes what the policy does: which actions are involved and what is the effect on them.
 ```
 
 **Sid:**
 ```
-_____________________________________________________________
-_____________________________________________________________
+ID to identify the policy.
 ```
 
 **Effect:**
 ```
-_____________________________________________________________
-_____________________________________________________________
+Define whether the action is denied or allowed
 ```
 
 **Action:**
 ```
-_____________________________________________________________
-_____________________________________________________________
+Which commmand(s) are involved and affected in the policy.
 ```
 
 **Resource:**
 ```
-_____________________________________________________________
-_____________________________________________________________
+The service involved in the policy. 
 ```
 
 ---
@@ -54,19 +48,33 @@ _____________________________________________________________
 
 ### S3 Read-Only Policy
 
-**Policy Name:** ___________________________
+**Policy Name:** S3-ReadOnly-SpecificBucket
 
-**Bucket Name Used:** ___________________________
+**Bucket Name Used:** dev-bucket-julio2026
 
 **Policy JSON:**
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    
-    
-    
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ListSpecificBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": "arn:aws:s3:::dev-bucket-julio2026"
+        },
+        {
+            "Sid": "ReadObjectsInBucket",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:GetObjectVersion"
+            ],
+            "Resource": "arn:aws:s3:::dev-bucket-julio2026/*"
+        }
+    ]
 }
 ```
 
@@ -77,9 +85,9 @@ _____________________________________________________________
 
 ### EC2 Start/Stop Policy
 
-**Policy Name:** ___________________________
+**Policy Name:** EC2-StartStop-Only
 
-**Policy ARN:** ___________________________
+**Policy ARN:** arn:aws:iam::829910101871:policy/EC2-StartStop-Only
 
 **Screenshot 2: EC2 Custom Policy**
 ![EC2 Policy](screenshots/02-ec2-policy.png)
@@ -88,9 +96,9 @@ _____________________________________________________________
 
 ### CloudWatch Logs Write Policy
 
-**Policy Name:** ___________________________
+**Policy Name:** CloudWatch-Logs-Write-Only
 
-**Policy ARN:** ___________________________
+**Policy ARN:** arn:aws:iam::829910101871:policy/CloudWatch-Logs-Write-Only
 
 **Screenshot 3: CloudWatch Logs Policy**
 ![CloudWatch Policy](screenshots/03-cloudwatch-policy.png)
@@ -101,11 +109,11 @@ _____________________________________________________________
 
 ### Policy Attached to User
 
-**User Name:** ___________________________
+**User Name:** test-developer
 
-**Policy Attached:** ___________________________
+**Policy Attached:** S3-ReadOnly-SpecificBucket
 
-**Attachment Method:** ☐ Console ☐ CLI
+**Attachment Method:** [X] Console ☐ CLI
 
 **CLI Command (if used):**
 ```bash
@@ -122,24 +130,28 @@ _____________________________________________________________
 
 ### EC2 Service Role
 
-**Role Name:** ___________________________
+**Role Name:** EC2-S3-ReadOnly-Role 
 
-**Role ARN:** ___________________________
+**Role ARN:** arn:aws:iam::829910101871:role/EC2-S3-ReadOnly-Role
 
-**Trusted Entity:** ___________________________
+**Trusted Entity:** ec2.amazonaws.com
 
 **Attached Policies:**
-1. ___________________________
-2. ___________________________
+1. AmazonS3ReadOnlyAccess
 
 **Trust Relationship JSON:**
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    
-    
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
 }
 ```
 
@@ -150,13 +162,13 @@ _____________________________________________________________
 
 ### Lambda Execution Role
 
-**Role Name:** ___________________________
+**Role Name:** Lambda-Basic-Execution-Role
 
-**Role ARN:** ___________________________
+**Role ARN:** arn:aws:iam::829910101871:role/Lambda-Basic-Execution-Role
 
 **Attached Policies:**
-1. ___________________________
-2. ___________________________
+1. AWSLambdaBasicExecutionRole
+2. CloudWatch-Logs-Write-Only
 
 **Screenshot 6: Lambda Role**
 ![Lambda Role](screenshots/06-lambda-role.png)
@@ -165,16 +177,16 @@ _____________________________________________________________
 
 ### Cross-Account Access Role
 
-**Role Name:** ___________________________
+**Role Name:** CrossAccount-ReadOnly-Role
 
-**Role ARN:** ___________________________
+**Role ARN:** arn:aws:iam::829910101871:root
 
-**External Account ID:** ___________________________
+**External Account ID:** 829910101871
 
-**External ID:** ___________________________
+**External ID:** unique-external-id-123
 
 **Attached Policies:**
-1. ___________________________
+1. ReadOnlyAccess
 
 **Screenshot 7: Cross-Account Role**
 ![Cross-Account Role](screenshots/07-cross-account-role.png)
@@ -185,17 +197,17 @@ _____________________________________________________________
 
 ### Policy Simulator Results
 
-**Policy Tested:** ___________________________
+**Policy Tested:** S3-ReadOnly-SpecificBucket
 
 **Test Results:**
 
 | Action | Expected Result | Actual Result | Pass/Fail |
 |--------|----------------|---------------|-----------|
-| s3:GetObject | Allowed | | ☐ Pass ☐ Fail |
-| s3:PutObject | Denied | | ☐ Pass ☐ Fail |
-| s3:DeleteObject | Denied | | ☐ Pass ☐ Fail |
-| ec2:StartInstances | | | ☐ Pass ☐ Fail |
-| ec2:TerminateInstances | | | ☐ Pass ☐ Fail |
+| s3:GetObject | Allowed | | [x] Pass ☐ Fail |
+| s3:PutObject | Denied | | [x] Pass ☐ Fail |
+| s3:DeleteObject | Denied | | [x] Pass ☐ Fail |
+| ec2:StartInstances | Denied | Denied | [x] Pass ☐ Fail |
+| ec2:TerminateInstances | Denied | Denied |[x] Pass ☐ Fail |
 
 **Screenshot 8: Policy Simulator**
 ![Policy Simulator](screenshots/08-policy-simulator.png)
@@ -206,35 +218,32 @@ _____________________________________________________________
 
 **Test 1: S3 List Bucket**
 ```bash
-# Command:
+# Command: aws s3 ls s3://dev-bucket-julio2026/
 
 # Output:
-_____________________________________________________________
-_____________________________________________________________
+(No output) - no files added yet
 
-# Result: ☐ Success ☐ Access Denied
+# Result: [x] Success ☐ Access Denied
 ```
 
 **Test 2: S3 Upload File**
 ```bash
-# Command:
+# Command: aws s3 cp test.txt s3://dev-bucket-julio2026/
 
 # Output:
-_____________________________________________________________
-_____________________________________________________________
+Unable to upload the file
 
-# Result: ☐ Success ☐ Access Denied (Expected)
+# Result: ☐ Success [x] Access Denied (Expected)
 ```
 
 **Test 3: S3 Download File**
 ```bash
-# Command:
+# Command: aws s3 cp s3://dev-bucket-julio2026/test2.txt ./
 
 # Output:
-_____________________________________________________________
-_____________________________________________________________
+download: s3://dev-bucket-julio2026/test_2.txt to .\test_2.txt 
 
-# Result: ☐ Success ☐ Access Denied
+# Result: [x] Success ☐ Access Denied
 ```
 
 ---
@@ -243,34 +252,37 @@ _____________________________________________________________
 
 ### Custom Policy with Conditions
 
-**Policy Name:** ___________________________
+**Policy Name:** EC2-AccessTimeFixed
 
-**Condition Type Used:** ☐ IP Address ☐ Time Window ☐ MFA ☐ Other: _______
+**Condition Type Used:** ☐ IP Address [x] Time Window ☐ MFA ☐ Other: _______
 
 **Policy JSON:**
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        
-      ],
-      "Resource": "",
-      "Condition": {
-        
-      }
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "DateGreaterThan": {
+                    "aws:CurrentTime": "2026-07-08T00:00:00Z"
+                },
+                "DateLessThan": {
+                    "aws:CurrentTime": "2026-07-09T00:00:00Z"
+                }
+            }
+        }
+    ]
 }
 ```
 
 **Rationale for this policy:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+For some projects, some resources are just needed for a specific time period. Fixing this time may reduce costs. 
 ```
 
 ---
@@ -281,27 +293,34 @@ _____________________________________________________________
 
 **Issue Description:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+get-user-policy command for IAM did not work 
+as it is used to get policies made specific for a certain user
 ```
 
 **Commands Used to Diagnose:**
 ```bash
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+aws iam simulate-principal-policy 
+ \--policy-source-arn arn:aws:iam::829910101871:user/test-developer 
+ \--action-names s3:GetObject 
+ \--resource-arns arn:aws:s3:::charlie-bucket-demo-lab2026
+ 
+aws iam get-role --role-name EC2-S3-ReadOnly-Role  --query 'Role.AssumeRolePolicyDocument'
+
+aws sts assume-role \
+  --role-arn arn:aws:iam::829910101871:role/EC2-S3-ReadOnly-Role \
+  --role-session-name test-session
+  
+aws sts assume-role --role-arn arn:aws:iam::829910101871:role/EC2-S3-ReadOnly-Role --role-session-name test-session
+
 ```
 
 **Resolution:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+Assign the roles to the services needed and the policies to the users needed
 ```
 
 **Screenshot 9: Troubleshooting Output**
-![Troubleshooting](screenshots/09-troubleshooting.png)
+![Troubleshooting IAM Access](screenshots/09-troubleshooting.png)
 
 ---
 
@@ -311,48 +330,43 @@ _____________________________________________________________
 
 **Your answer:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+It allows all EC2 instances to have the same permissions given on the role, instead of assigning them directly (it will take longer)
 ```
 
 ### 2. Explain the principle of least privilege and how you applied it in this lab.
 
 **Your answer:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+It is a concept used to limit the privilege to a user or a service to work with an specific feature. 
+It was applied by assigning policies to the users, roles to the services and even custom the policies to even limit more the 
+privilege (reduce available time, IP Address speficic, MFA needed)
 ```
 
 ### 3. What is the difference between identity-based and resource-based policies?
 
 **Your answer:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+Some policies are created specific for some users/groups (identity based), 
+while some others are created for the resource in use. 
 ```
 
 ### 4. When would you use an explicit "Deny" in a policy?
 
 **Your answer:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+One good example could be when you want a user to have access to the S3 resource, 
+but no access to specific buckets. 
 ```
 
 ### 5. Describe a scenario where you'd use conditions in IAM policies.
 
 **Your answer:**
 ```
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+In a project where I have Architects, Developers and Testers. 
+Architects would have full access to the OS and Design files of the projects
+Developers may require specific access to the OS, but Design files can be read-only
+Testers may require read-only access to desing and application files, but full access to testing code.
+
 ```
 
 ---
@@ -360,34 +374,34 @@ _____________________________________________________________
 ## Summary of Resources Created
 
 **IAM Policies:**
-1. ___________________________  (ARN: ___________________________)
-2. ___________________________  (ARN: ___________________________)
-3. ___________________________  (ARN: ___________________________)
+1. S3-ReadOnly-SpecificBucket  (ARN: arn:aws:iam::829910101871:policy/S3-ReadOnly-SpecificBucket)
+2. EC2-StartStop-Only  (ARN: arn:aws:iam::829910101871:policy/EC2-StartStop-Only)
+3. EC2-AccessTimeFixed  (ARN: arn:aws:iam::829910101871:policy/EC2-AccessTimeFixed)
 
 **IAM Roles:**
-1. ___________________________  (ARN: ___________________________)
-2. ___________________________  (ARN: ___________________________)
-3. ___________________________  (ARN: ___________________________)
+1. EC2-S3-ReadOnly-Role  (ARN: arn:aws:iam::829910101871:role/EC2-S3-ReadOnly-Role)
+2. Lambda-Basic-Execution-Role  (ARN: arn:aws:iam::829910101871:role/Lambda-Basic-Execution-Role)
+3. CrossAccount-ReadOnly-Role   (ARN: arn:aws:iam::829910101871:role/CrossAccount-ReadOnly-Role)
 
 **Users Modified:**
-1. ___________________________
+1. test-developer
 
 ---
 
 ## Cleanup Confirmation
 
-- [ ] Detached all custom policies from users
-- [ ] Deleted custom IAM policies
-- [ ] Detached policies from roles
-- [ ] Deleted test IAM roles
-- [ ] Verified no resources remain
+- [x] Detached all custom policies from users
+- [x] Deleted custom IAM policies
+- [x] Detached policies from roles
+- [x] Deleted test IAM roles
+- [x] Verified no resources remain
 
 **Cleanup Commands:**
 ```bash
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
-_____________________________________________________________
+aws iam detach-user-policy --user-name test-developer --policy-arn arn:aws:iam::829910101871:policy/S3-ReadOnly-SpecificBucket
+aws iam delete-policy --policy-arn arn:aws:iam::829910101871:policy/S3-ReadOnly-SpecificBucket
+aws iam detach-role-policy --role-name EC2-S3-ReadOnly-Role --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+aws iam delete-role --role-name EC2-S3-ReadOnly-Role
 ```
 
 ---
@@ -398,14 +412,14 @@ _____________________________________________________________
 
 | Concept | Before Lab | After Lab | Improvement |
 |---------|-----------|-----------|-------------|
-| IAM Policy Structure | ___/5 | ___/5 | +___ |
-| Custom Policy Creation | ___/5 | ___/5 | +___ |
-| IAM Roles | ___/5 | ___/5 | +___ |
-| Service Roles | ___/5 | ___/5 | +___ |
-| Trust Relationships | ___/5 | ___/5 | +___ |
-| Policy Testing | ___/5 | ___/5 | +___ |
-| Least Privilege | ___/5 | ___/5 | +___ |
-| Troubleshooting IAM | ___/5 | ___/5 | +___ |
+| IAM Policy Structure | 2/5 | 5/5 | +3 |
+| Custom Policy Creation | 2/5 | 5/5 | +3 |
+| IAM Roles | 1/5 | 3/5 | +2 |
+| Service Roles | 1/5 | 2/5 | +1 |
+| Trust Relationships | 0/5 | 3/5 | +3 |
+| Policy Testing | 0/5 | 5/5 | +5 |
+| Least Privilege | 3/5 | 5/5 | +2 |
+| Troubleshooting IAM | 0/5 | 2/5 | +2 |
 
 ---
 
@@ -432,4 +446,4 @@ _____________________________________________________________
 
 **Lab Status:** ☐ Complete ☐ Needs Revision
 
-**Submission Date:** ___________________________
+**Submission Date:** 08/07/2026
